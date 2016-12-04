@@ -143,3 +143,18 @@ Note: these query formats are subject to change!
 ### Handshake
 
 The tmsp handshake and related improvements are [upcoming in v0.8.0](https://github.com/tendermint/tendermint/issues/300) 
+The purpose of the handshake is to allow Tendermint to determine what blocks the app has processed,
+and to replay or apply any blocks that have not been processed. Using the handshake mechanism,
+Tendermint and the App can stay synced despite various forms of process failure.
+
+Warning: If you do not implement the handshake, certain crash failures may cause your state to become corrupted,
+requiring complex manual intervention to solve. Fortunately, the Handshake is easy.
+
+The `Info` message returns four values, as defined in the protobuf file: 
+	- `info` (string) - arbitrary string
+	- `tmsp_info` (TMSPInfo) - contains the tmsp version
+	- `last_block` (LastBlockInfo) - contains last block height and app hash 
+	- `config` (ConfigInfo) - contains some config information
+
+Currently, the only piece implemented is the `tmsp_info`. The app *MUST* return the latest block height processed and the app hash after committing that block.
+
